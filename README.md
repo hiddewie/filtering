@@ -14,4 +14,4 @@ Filters a process using a particle filter.
 
 ## Examples
 
-Look for examples in (main.py).
+Look for examples in [main.py].
