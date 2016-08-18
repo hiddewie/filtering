@@ -1,9 +1,9 @@
-
 import math
 import random
 
 
 class Distribution:
+    """ Base class for a distribution """
 
     def expectation(self):
         raise NotImplementedError
@@ -21,7 +21,9 @@ class Distribution:
         raise NotImplementedError
 
 
-class NormalDistribution (Distribution):
+class NormalDistribution(Distribution):
+    """ Represents a N(mu, sigma) distribution """
+
     def __init__(self, mu, sigma):
         assert sigma > 0
         self.mu = mu
@@ -43,7 +45,9 @@ class NormalDistribution (Distribution):
         raise NotImplementedError
 
 
-class NoiseDistribution (NormalDistribution):
+class NoiseDistribution(NormalDistribution):
+    """ Represents a N(0, sigma) distribution, for generating white noise """
+
     def __init__(self, sigma):
         super().__init__(0, sigma)
 
@@ -51,15 +55,20 @@ class NoiseDistribution (NormalDistribution):
         raise NotImplementedError
 
 
-class DiscreteDistribution (Distribution):
+class DiscreteDistribution(Distribution):
+    """ Represents a discrete distribution with w_i given """
+
     def __init__(self, values):
+        # The sum of the weights must be positive
         s = sum(w for (x, w) in values)
         assert s > 0
+
         # Normalize weights
         for i in range(len(values)):
             values[i][1] /= s
 
         self.values = values
+        # Generate a distribution to draw from
         self.U = UniformDistribution(0, 1)
 
     def expectation(self):
@@ -85,7 +94,9 @@ class DiscreteDistribution (Distribution):
         raise NotImplementedError
 
 
-class UniformDistribution (Distribution):
+class UniformDistribution(Distribution):
+    """ Represents a uniform U(a, b) distribution with a < b """
+
     def __init__(self, a, b):
         assert a < b
         self.a = a
@@ -113,7 +124,9 @@ class UniformDistribution (Distribution):
         return 1
 
 
-class StaticDistribution (Distribution):
+class StaticDistribution(Distribution):
+    """ Represents a distribution where P(X = a) == 1 for a single value of a """
+
     def __init__(self, q):
         self.q = q
 

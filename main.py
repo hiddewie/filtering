@@ -5,6 +5,11 @@ from model import *
 
 
 def generatedata(model: FilterModel, n):
+    """
+    Generate n steps of data, but yield the results for large amounts of data.
+    If the data has been generated before, it is reused.
+    """
+
     for i in range(model.k):
         yield model.ys[i]
 
@@ -13,11 +18,16 @@ def generatedata(model: FilterModel, n):
 
 
 def filterdata(filter: Filter, model: FilterModel, n):
+    """ Filter data for a model and a filter, with n steps """
+
     for data in generatedata(model, n):
         filter.update(data)
 
 
 def plot(model: FilterModel, filters: [Filter]):
+    """ Plots models, with used filters """
+
+    # Create a figure
     fig = plt.figure()
 
     fig.suptitle('Value of generating model and filters')
@@ -25,21 +35,30 @@ def plot(model: FilterModel, filters: [Filter]):
     ax.plot(model.xs)
     plt.xlabel('Time step')
     plt.ylabel('State value')
+
+    # Process filters
     for filter in filters:
+        # Add the history of the filter
         ax.plot(filter.xs)
+
+        # If the filter is a particle filter, add all the particles as small dots to show the distribution
         if isinstance(filter, ParticleFilter):
             index = 0
             for particles in filter.particleHistory:
                 ax.plot([index] * len(particles), [x for (x, w) in particles], 'b,')
                 index += 1
+    # Add a legend
     ax.legend([model.name] + [filter.name for filter in filters])
 
+    # Create a new figure
     fig = plt.figure()
     fig.suptitle('Real and expected error of filters')
 
     ax = fig.add_subplot(1, 1, 1)
     plt.xlabel('Time step')
     plt.ylabel('State value')
+
+    # Add the MSEs
     for filter in filters:
         data = [(filter.xs[i] - model.xs[i]) ** 2 for i in range(len(model.xs))]
         ax.plot(data)
@@ -51,18 +70,24 @@ def plot(model: FilterModel, filters: [Filter]):
         legend.append('MSE of ' + filter.name)
     ax.legend(legend)
 
+    # Show the plots
     plt.show()
 
 
 def simulate(n: int, model: FilterModel, N: int, resampleThreshold: float):
+    """ Simulates a model for an extended Kalman filter and a Particle filter, for n steps, with N particles and a resample threshold """
+
     assert 0 <= resampleThreshold <= 1
 
+    # Generate filters
     filters = [ExtendedKalmanFilter(model),
                ParticleFilter(model, N, resampleThreshold)]
 
+    # Filter the data
     for filter in filters:
         filterdata(filter, model, n)
 
+    # Plot the results
     plot(model, filters)
 
 
