@@ -101,27 +101,27 @@ if __name__ == '__main__':
     model = LinearFilterModel(NormalDistribution(10, 1), NoiseDistribution(1), NoiseDistribution(1), 1, 1)
     # Uncomment the line below to use the same truth
     #model.sameTruth = True
-    simulate(n, model, 100, T)
+    # simulate(n, model, 100, T)
 
     # ---
     # Nonlinear model, x := sin(x) + v, y = cos(x) + w
     # ---
-    model = FilterModel(NormalDistribution(10, 1), NoiseDistribution(1), NoiseDistribution(1), math.sin, math.cos, math.cos, lambda x: -math.sin(x))
+    model = FilterModel(NormalDistribution(10, 1), NoiseDistribution(0.1), NoiseDistribution(0.1), math.sin, math.cos, math.cos, lambda x: -math.sin(x))
     # Uncomment the line below to use the same truth
     #model.sameTruth = True
     # Uncomment the line below to use the model with different parameters
     #model = FilterModel(NormalDistribution(0.5, 1), NoiseDistribution(0.1), NoiseDistribution(0.02), math.sin, math.cos, math.cos, lambda x: -math.sin(x))
-    #simulate(n, model, 1000, 1)
+    # simulate(n, model, 1000, 1)
 
     # ---
     # Nonlinear model, x := 10/(1+x^2) + v, y = x + w
     # ---
-    model = FilterModel(NormalDistribution(10, 1), NoiseDistribution(1), NoiseDistribution(1), lambda x: 10/(1+x*x), lambda x: -20*x/(x*x+1)**2, lambda x: x, lambda _: 1)
-    #simulate(n, model, 100, T)
+    model = FilterModel(NormalDistribution(10, 1), NoiseDistribution(0.2), NoiseDistribution(0.2), lambda x: 10/(1+x*x), lambda x: -20*x/(x*x+1)**2, lambda x: x, lambda _: 1)
+    # simulate(n, model, 100, T)
 
     # ---
     # Nonlinear model, x := x/(1+x^2) + v, y = x + w
     # ---
-    model = FilterModel(NormalDistribution(10, 1), NoiseDistribution(1), NoiseDistribution(1), lambda x: x/(1+x*x), lambda x: (1-x*x)/(x*x+1)**2, lambda x: x, lambda _: 1)
-    #simulate(n, model, 100, T)
+    model = FilterModel(NormalDistribution(10, 1), NoiseDistribution(0.5), NoiseDistribution(0.5), lambda x: x/(1+x*x), lambda x: (1-x*x)/(x*x+1)**2, lambda x: x, lambda _: 1)
+    simulate(n, model, 100, T)
 
